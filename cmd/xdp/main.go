@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -10,13 +9,15 @@ import (
 
 	"os/signal"
 
+	flag "github.com/spf13/pflag"
+
 	"github.com/laik/ebpf-app/pkg/xdp"
 	"gopkg.in/fsnotify.v1"
 	"gopkg.in/yaml.v2"
 )
 
 var (
-	configFlag = flag.String("conf", "", "[mandatory] xdp configuration file (YAML)")
+	configFlag = flag.String("cfg", "", "[mandatory] xdp configuration file (YAML)")
 	version    = flag.Bool("v", false, "Display version")
 )
 

@@ -38,7 +38,6 @@ func NewXDPRedirectApp(input map[string]string) (*App, error) {
 
 	err := loadRedirectObjects(c.objs, &ebpf.CollectionOptions{})
 	if err != nil {
-		// panic(err)
 		return nil, err
 	}
 

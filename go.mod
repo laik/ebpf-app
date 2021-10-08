@@ -16,6 +16,8 @@ require (
 
 require (
 	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/spf13/flag v0.0.0-20140426202619-916eaf9e2dc5
+	github.com/spf13/pflag v1.0.5
 	gopkg.in/fsnotify.v1 v1.4.7
 	gopkg.in/yaml.v2 v2.4.0
 )
