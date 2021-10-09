@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"syscall"
-
-	"os/signal"
 
 	flag "github.com/spf13/pflag"
 
 	"github.com/laik/ebpf-app/pkg/xdp"
+	"github.com/laik/ebpf-app/utils"
 	"gopkg.in/fsnotify.v1"
 	"gopkg.in/yaml.v2"
 )
@@ -21,34 +19,17 @@ var (
 	version    = flag.Bool("v", false, "Display version")
 )
 
-func setupSigHandlers(cancel context.CancelFunc) {
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP)
-
-	go func() {
-		sig := <-sigs
-		log.Printf("Received syscall:%+v", sig)
-		cancel()
-	}()
-
-}
-
-func printVersion(gitCommit string) {
-	fmt.Printf("Version: %s\n", gitCommit)
-	os.Exit(0)
-}
-
 func Run(commit string) error {
 	fmt.Println("eBPF app")
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	setupSigHandlers(cancel)
+	utils.SetupSigHandlers(cancel)
 
 	flag.Parse()
 
 	if *version {
-		printVersion(commit)
+		utils.PrintVersion(commit)
 	}
 
 	if *configFlag == "" {

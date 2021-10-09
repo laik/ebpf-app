@@ -3,12 +3,11 @@ package xdp
 import (
 	"context"
 	"log"
-	"sort"
 
 	"github.com/cilium/ebpf"
 	"github.com/hashicorp/go-multierror"
+	"github.com/laik/ebpf-app/pkg/common"
 	"github.com/vishvananda/netlink"
-	"golang.org/x/sys/unix"
 )
 
 //go:generate go run github.com/cilium/ebpf/cmd/bpf2go redirect ../../ebpf/redirect.c -- -I../../ebpf/include -O2 -Wall
@@ -30,9 +29,9 @@ func NewXDPRedirectApp(input map[string]string) (*App, error) {
 		linkMap: make(map[string]*netlink.Link),
 	}
 
-	c.input = makeSymm(input)
+	c.input = common.MakeSymm(input)
 
-	if err := increaseResourceLimits(); err != nil {
+	if err := common.IncreaseResourceLimits(); err != nil {
 		return nil, err
 	}
 
@@ -90,9 +89,9 @@ func (c *App) cleanup() error {
 // update ensures running state matches the candidate
 func (c *App) update(candidates map[string]string) error {
 
-	candidates = makeSymm(candidates)
+	candidates = common.MakeSymm(candidates)
 
-	added, changed, orphaned := confDiff(c.input, candidates)
+	added, changed, orphaned := common.ConfDiff(c.input, candidates)
 
 	// Dealing with added interfaces
 	err := c.updateLinkMap(added)
@@ -176,58 +175,4 @@ func (c *App) Launch(ctx context.Context, updateCh chan map[string]string) {
 			}
 		}
 	}
-}
-
-// increaseResourceLimits https://prototype-kernel.readthedocs.io/en/latest/bpf/troubleshooting.html#memory-ulimits
-func increaseResourceLimits() error {
-	return unix.Setrlimit(unix.RLIMIT_MEMLOCK, &unix.Rlimit{
-		Cur: unix.RLIM_INFINITY,
-		Max: unix.RLIM_INFINITY,
-	})
-}
-
-// makeSymm enforces symmetricity of map[string]string
-// first k/v pair wins, repeated values are discarded
-func makeSymm(inMap map[string]string) map[string]string {
-	res := make(map[string]string)
-
-	var keys []string
-	for k := range inMap {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	for _, k := range keys {
-		v := inMap[k]
-		_, keyFound := res[k]
-		_, valFound := res[v]
-		if !keyFound && !valFound {
-			res[k] = v
-			res[v] = k
-		}
-	}
-
-	return res
-}
-
-// confDiff compares the running and candidate configurations
-// and returns any new, changed or removed interface names
-func confDiff(running, candidates map[string]string) ([]string, []string, []string) {
-	var new, changed, orphaned []string
-	for c1, c2 := range candidates {
-		p2, ok := running[c1]
-		if !ok {
-			new = append(new, c1)
-		} else if p2 != c2 {
-			changed = append(changed, c1)
-		}
-	}
-
-	for p1 := range running {
-		_, ok := candidates[p1]
-		if !ok {
-			orphaned = append(orphaned, p1)
-		}
-	}
-	return new, changed, orphaned
 }

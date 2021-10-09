@@ -43,5 +43,5 @@ sudo ip netns exec ns1 ping 169.254.1.30 &
 start xdp-redirect
 ```
 make build
-./xdp-redirect --cfg config/cfg.yaml
+./bin/xdp-redirect --cfg config/cfg.yaml
 ```

@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "bpf_helpers.h": "c"
+        "bpf_helpers.h": "c",
+        "swab.h": "c",
+        "pkt_cls.h": "c"
     }
 }

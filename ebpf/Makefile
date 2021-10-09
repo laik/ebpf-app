@@ -1,12 +1,13 @@
 
-BPF        = redirect.o
+XDP        = redirect.o
+CLSACT     = clsact.o
 BPFCC      = clang
 BPFCFLAGS  = -target bpf -Wall -O2 -emit-llvm -g
 BPFCFLAGS += -Iinclude
 BPFLC      = llc
 BPFLCFLAGS = -march=bpf -mcpu=probe -filetype=obj
 
-all: $(BPF)
+all: $(XDP) $(CLSACT)
 
 %.o: %.c
 	$(BPFCC) $(BPFCFLAGS) -c $< -o - | \

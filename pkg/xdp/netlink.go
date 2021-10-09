@@ -44,7 +44,6 @@ func (c *App) cleanupLinkMap(intfs []string) {
 }
 
 func (c *App) addXdpToLink(intfs []string) error {
-
 	var errs error
 	for _, intf := range intfs {
 		link := c.linkMap[intf]
