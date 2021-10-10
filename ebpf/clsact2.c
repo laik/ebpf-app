@@ -5,13 +5,6 @@
 #include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
 
-#define CLS_ACT_MAP_SIZE 1024
-
-int process_packet(struct __sk_buff *skb)
-{
-    return -1;
-}
-
 int classifier(struct __sk_buff *skb)
 {
     void *data_end = (void *)(unsigned long long)skb->data_end;
@@ -22,15 +15,9 @@ int classifier(struct __sk_buff *skb)
         return TC_ACT_SHOT;
 
     if (eth->h_proto == ___constant_swab16(ETH_P_IP))
-        /*
-         * Packet processing is not implemented in this sample. Parse
-         * IPv4 header, possibly push/pop encapsulation headers, update
-         * header fields, drop or transmit based on network policy,
-         * collect statistics and store them in a eBPF map...
-         */
-        return process_packet(skb);
-    else
-        return TC_ACT_OK;
+        return TC_ACT_PIPE;
+
+    return TC_ACT_OK;
 }
 
 char _license[] SEC("license") = "GPL";
