@@ -39,11 +39,12 @@ EXTRA_DEPS +=
 # BPF-prog kern and userspace shares struct via header file:
 KERN_USER_H ?= $(wildcard common_kern_user.h)
 
-CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -g
-CFLAGS += -I../headers/
+CFLAGS ?= -I$(LIBBPF_DIR)/src/ -g
 LDFLAGS ?= -L$(LIBBPF_DIR)
 
-BPF_CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -I../headers/
+BPF_CFLAGS ?= -I$(LIBBPF_DIR)/
+# ARM64_LIB = /usr/include/aarch64-linux-gnu/
+# BPF_CFLAGS += -I$(ARM64_LIB)
 
 LIBS = -l:libbpf.a -lelf $(USER_LIBS)
 

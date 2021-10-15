@@ -9,18 +9,17 @@ import (
 	"github.com/laik/ebpf-app/pkg/common"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go pingcount ../../ebpf/xdp_ping_count.c -- -I../../ebpf/include -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go xdppingcount ../../ebpf/src/xdp_ping_count.c -- -I../../ebpf/libbpf/src  -O2 -Walls
 
 // App stores ebpf programs and maps together with the desired state
 type App struct {
-	objs  *pingcountObjects
-	data  *pingcountMapSpecs
+	objs  *xdppingcountObjects
 	links []string
 }
 
 func NewXDPPingCountApp() (*App, error) {
 	c := &App{
-		objs:  &pingcountObjects{},
+		objs:  &xdppingcountObjects{},
 		links: make([]string, 0),
 	}
 
@@ -28,7 +27,7 @@ func NewXDPPingCountApp() (*App, error) {
 		return nil, err
 	}
 
-	err := loadPingcountObjects(c.objs, &ebpf.CollectionOptions{})
+	err := loadXdppingcountObjects(c.objs, &ebpf.CollectionOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -63,10 +62,10 @@ func (c *App) Launch(ctx context.Context, links []string) {
 				log.Fatalf("Cleanup Failed: %s", err)
 			}
 			return
-		default:
-			if err := c.withHandle(nil, nil, nil); err != nil {
-				log.Fatalf("Handle Failed: %s", err)
-			}
+			// default:
+			// 	if err := c.withHandle(nil, nil, nil); err != nil {
+			// 		log.Fatalf("Handle Failed: %s", err)
+			// 	}
 		}
 	}
 }
@@ -74,7 +73,7 @@ func (c *App) Launch(ctx context.Context, links []string) {
 type Handle func(k, v interface{}) error
 
 func (c *App) withHandle(k, v interface{}, f Handle) error {
-	if err := c.objs.pingcountMaps.XdpPingCountMap.NextKey(k, v); err != nil {
+	if err := c.objs.xdppingcountMaps.PingCntMap.NextKey(k, v); err != nil {
 		return err
 	}
 	return f(k, v)

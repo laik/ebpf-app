@@ -3,8 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${default}",
-                "${workspaceFolder}/ebpf/include"
+                "${workspaceFolder}/ebpf/libbpf/src",
+                "/usr/include/aarch64-linux-gnu/"
             ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c11",

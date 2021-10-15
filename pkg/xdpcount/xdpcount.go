@@ -10,7 +10,7 @@ import (
 	"github.com/laik/ebpf-app/pkg/common"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go xdpcount ../../ebpf/xdpcount.c -- -I../../ebpf/include -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go xdpcount ../../ebpf/src/xdpcount.c -- -I../../ebpf/libbpf/src -O2 -Wall
 
 // App stores ebpf programs and maps together with the desired state
 type App struct {

@@ -1,5 +1,5 @@
 #include <linux/bpf.h>
-#include <bpf/bpf_helpers.h>
+#include <bpf_helpers.h>
 
 #define XDP_REDIRECT_MAP_SIZE 1024
 

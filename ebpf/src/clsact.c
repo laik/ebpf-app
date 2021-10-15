@@ -3,7 +3,7 @@
 #include <linux/pkt_cls.h>
 #include <linux/swab.h>
 #include <linux/bpf.h>
-#include <bpf/bpf_helpers.h>
+#include <bpf_helpers.h>
 
 #define CLS_ACT_MAP_SIZE 1024
 

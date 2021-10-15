@@ -8,7 +8,7 @@ import (
 	"github.com/vishvananda/netlink"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go clsact ../../ebpf/clsact.c -- -I../../ebpf/include -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go clsact ../../ebpf/src/clsact.c -- -I../../ebpf/libbpf/src -O2 -Wall
 
 // App stores ebpf programs and maps together with the desired state
 type App struct {

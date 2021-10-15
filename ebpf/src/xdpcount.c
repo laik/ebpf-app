@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 #include <linux/bpf.h>
-#include <bpf/bpf_helpers.h>
+#include <bpf_helpers.h>
+#include <bpf_endian.h>
 
 /* This is the data record stored in the map */
 struct datarec
@@ -31,29 +32,23 @@ SEC("xdp_stats1")
 int xdp_stats1_func(struct xdp_md *ctx)
 {
     // void *data_end = (void *)(long)ctx->data_end;
-    // void *data     = (void *)(long)ctx->data;
+    // void *data = (void *)(long)ctx->data;
+
     struct datarec *rec;
     __u32 key = XDP_PASS; /* XDP_PASS = 2 */
 
-    /* Lookup in kernel BPF-side return pointer to actual data record */
     rec = bpf_map_lookup_elem(&xdp_stats_map, &key);
-    /* BPF kernel-side verifier will reject program if the NULL pointer
-	 * check isn't performed here. Even-though this is a static array where
-	 * we know key lookup XDP_PASS always will succeed.
-	 */
     if (!rec)
         return XDP_ABORTED;
 
-    /* Multiple CPUs can access data record. Thus, the accounting needs to
-	 * use an atomic operation.
-	 */
     lock_xadd(&rec->rx_packets, 1);
-    /* Assignment#1: Add byte counters
-         * - Hint look at struct xdp_md *ctx (copied below)
-         *
-         * Assignment#3: Avoid the atomic operation
-         * - Hint there is a map type named BPF_MAP_TYPE_PERCPU_ARRAY
-         */
+
+    // int pid = bpf_get_current_pid_tgid();
+    const char fmt_str[] = "Hello, world, from BPF! My PID is %d\n";
+
+    bpf_trace_printk(fmt_str, sizeof(fmt_str), 1234);
+
+    // bpf_printk(fmt_str, 1234);
 
     return XDP_PASS;
 }

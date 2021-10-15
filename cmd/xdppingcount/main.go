@@ -16,7 +16,7 @@ var (
 )
 
 func Run(commit string) error {
-	fmt.Println("eBPF xdpcount app")
+	fmt.Println("eBPF xdp-ping-count app")
 
 	ctx, cancel := context.WithCancel(context.Background())
 

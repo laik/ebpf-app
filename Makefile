@@ -9,7 +9,7 @@ build: generate
 	go build -o ${BIN}/xdp-redirect cmd/xdp/*.go 
 	go build -o ${BIN}/clsact cmd/tc/*.go 
 	go build -o ${BIN}/xdpcount cmd/xdpcount/*.go 
-	go build -o ${BIN}/xdpcount cmd/xdppingcount/*.go 
+	go build -o ${BIN}/xdppingcount cmd/xdppingcount/*.go 
 	
 lint:
 	golangci-lint run
