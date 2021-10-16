@@ -3,6 +3,7 @@ package common
 import (
 	"sort"
 
+	"github.com/vishvananda/netlink"
 	"golang.org/x/sys/unix"
 )
 
@@ -12,6 +13,23 @@ func IncreaseResourceLimits() error {
 		Cur: unix.RLIM_INFINITY,
 		Max: unix.RLIM_INFINITY,
 	})
+}
+
+func LookupLink(intf string) (*netlink.Link, error) {
+	link, err := netlink.LinkByName(intf)
+	if err != nil {
+		return nil, err
+	}
+	return &link, nil
+}
+
+// forcing xdpgeneric for veth because https://www.netdevconf.org/0x13/session.html?talk-veth-xdp
+// tuntap also requires this probably for the same reasons
+func XdpFlags(linkType string) int {
+	if linkType == "veth" || linkType == "tuntap" {
+		return 2
+	}
+	return 0 // native xdp (xdpdrv) by default
 }
 
 // MakeSymm enforces symmetricity of map[string]string

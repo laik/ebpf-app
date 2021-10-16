@@ -11,15 +11,13 @@ import (
 )
 
 var (
-	links   = flag.StringArray("links", []string{}, "--links lo,eht0")
+	links   = flag.StringArray("links", nil, "--links lo,eht0")
 	version = flag.Bool("v", false, "Display version")
 )
 
 func Run(commit string) error {
 	fmt.Println("eBPF xdp-ping-count app")
-
 	ctx, cancel := context.WithCancel(context.Background())
-
 	utils.SetupSigHandlers(cancel)
 
 	flag.Parse()

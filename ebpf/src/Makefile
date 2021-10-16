@@ -1,4 +1,4 @@
-# XDPCOUNT_TARGETS  	  := xdpcount
+# XDPCOUNT_TARGETS  	  := xdp_ping_count
 XDP_TARGETS  := xdp_ping_count
 
 LLC ?= llc

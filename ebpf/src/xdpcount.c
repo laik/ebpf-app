@@ -2,6 +2,7 @@
 #include <linux/bpf.h>
 #include <bpf_helpers.h>
 #include <bpf_endian.h>
+#include "helper.h"
 
 /* This is the data record stored in the map */
 struct datarec
@@ -18,15 +19,8 @@ struct bpf_map_def SEC("maps") xdp_stats_map = {
     .type = BPF_MAP_TYPE_ARRAY,
     .key_size = sizeof(__u32),
     .value_size = sizeof(struct datarec),
-    .max_entries = XDP_ACTION_MAX,
+    .max_entries = 1024,
 };
-
-/* LLVM maps __sync_fetch_and_add() as a built-in function to the BPF atomic add
- * instruction (that is BPF_STX | BPF_XADD | BPF_W for word sizes)
- */
-#ifndef lock_xadd
-#define lock_xadd(ptr, val) ((void)__sync_fetch_and_add(ptr, val))
-#endif
 
 SEC("xdp_stats1")
 int xdp_stats1_func(struct xdp_md *ctx)
@@ -43,12 +37,7 @@ int xdp_stats1_func(struct xdp_md *ctx)
 
     lock_xadd(&rec->rx_packets, 1);
 
-    // int pid = bpf_get_current_pid_tgid();
-    const char fmt_str[] = "Hello, world, from BPF! My PID is %d\n";
-
-    bpf_trace_printk(fmt_str, sizeof(fmt_str), 1234);
-
-    // bpf_printk(fmt_str, 1234);
+    bpfprintf("test %d", 1234);
 
     return XDP_PASS;
 }

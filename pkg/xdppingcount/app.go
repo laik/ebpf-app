@@ -73,7 +73,7 @@ func (c *App) Launch(ctx context.Context, links []string) {
 type Handle func(k, v interface{}) error
 
 func (c *App) withHandle(k, v interface{}, f Handle) error {
-	if err := c.objs.xdppingcountMaps.PingCntMap.NextKey(k, v); err != nil {
+	if err := c.objs.xdppingcountMaps.CounterMap.NextKey(k, v); err != nil {
 		return err
 	}
 	return f(k, v)
