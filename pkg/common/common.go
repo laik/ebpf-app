@@ -7,6 +7,8 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+const MAP_DEFAULT_PATH = "/sys/fs/bpf/"
+
 // IncreaseResourceLimits https://prototype-kernel.readthedocs.io/en/latest/bpf/troubleshooting.html#memory-ulimits
 func IncreaseResourceLimits() error {
 	return unix.Setrlimit(unix.RLIMIT_MEMLOCK, &unix.Rlimit{
