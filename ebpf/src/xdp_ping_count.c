@@ -7,9 +7,7 @@
 #include "parsing_helpers.h"
 #include "helper.h"
 
-#include <string.h>
-
-#define COUNT_MAP_MAX_SIZE 65535
+#define COUNT_MAP_MAX_SIZE 1024
 
 struct S
 {
@@ -20,36 +18,50 @@ struct S
 struct bpf_map_def SEC("maps") counter_map = {
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(__u32),
-    .value_size = sizeof(struct S),
+    .value_size = 5,
+    .max_entries = COUNT_MAP_MAX_SIZE,
+};
+
+struct bpf_map_def SEC("maps") other_map = {
+    .type = BPF_MAP_TYPE_HASH,
+    .key_size = sizeof(__u32),
+    .value_size = 5,
     .max_entries = COUNT_MAP_MAX_SIZE,
 };
 
 SEC("xdp_ping_count")
 int xpd_ping_count_func(struct xdp_md *ctx)
 {
-    void *data_end = (void *)(long)ctx->data_end;
-    void *data = (void *)(long)ctx->data;
+    // void *data_end = (void *)(long)ctx->data_end;
+    // void *data = (void *)(long)ctx->data;
 
-    struct hdr_cursor nh;
-    int nh_type;
-    nh.pos = data;
+    // struct hdr_cursor nh;
+    // int nh_type;
+    // nh.pos = data;
 
-    // __u32 action = XDP_PASS;
+    __u32 key = 123;
+    char value[5] = "wocao";
 
-    bpfprintf("xdp working");
-    struct ethhdr *eth;
+    bpfprintf("xdp working\r\n");
 
-    nh_type = parse_ethhdr(&nh, data_end, &eth);
+    // struct ethhdr *eth;
 
-    struct S record;
+    // nh_type = parse_ethhdr(&nh, data_end, &eth);
 
-    memcpy(record.dest, eth->h_dest, ETH_ALEN);
-    memcpy(record.src, eth->h_source, ETH_ALEN);
+    // struct S record = {
+    //     .dest = "123",
+    //     .src = "321",
+    // };
 
-    // if (-1 == bpf_map_update_elem(&counter_map, &action, &record, BPF_ANY))
-    // {
-    //     bpfprintf("update count map error");
-    // }
+    // memcpy(&record.dest, eth->h_dest, ETH_ALEN);
+    // memcpy(&record.src, eth->h_source, ETH_ALEN);
+
+    bpf_map_update_elem(&counter_map, &key, &value, BPF_ANY);
+
+    char *ret;
+    ret = bpf_map_lookup_elem(&other_map, &key);
+
+    bpfprintf("recv other map %s\r\n", ret);
 
     // if (__bpf_htons(ETH_P_IP) == nh_type)
     // {

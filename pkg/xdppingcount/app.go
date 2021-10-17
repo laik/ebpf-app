@@ -2,6 +2,7 @@ package xdppingcount
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/cilium/ebpf"
@@ -62,19 +63,35 @@ func (c *App) Launch(ctx context.Context, links []string) {
 				log.Fatalf("Cleanup Failed: %s", err)
 			}
 			return
-			// default:
-			// 	if err := c.withHandle(nil, nil, nil); err != nil {
-			// 		log.Fatalf("Handle Failed: %s", err)
-			// 	}
+		default:
+			var k uint32 = 123
+			// var v uint32
+			// if err := c.withHandle(&k, &v, h); err != nil {
+			// 	log.Fatalf("Handle Failed: %s", err)
+			// }
+			if err := c.objs.xdppingcountMaps.OtherMap.Put(uint32(123), "wocao"); err != nil {
+				log.Fatalf("put Failed: %s", err)
+			}
+			bs, err := c.objs.xdppingcountMaps.CounterMap.NextKeyBytes(k)
+			if err != nil {
+				log.Fatalf("Handle Failed: %s", err)
+			}
+			fmt.Printf("look value %s\r\n", bs)
 		}
 	}
 }
 
-type Handle func(k, v interface{}) error
+func h(k, v *uint32) error {
+	fmt.Printf("key %d value %d\r\n", k, v)
+	return nil
+}
 
-func (c *App) withHandle(k, v interface{}, f Handle) error {
-	if err := c.objs.xdppingcountMaps.CounterMap.NextKey(k, v); err != nil {
-		return err
+type Handle func(k, v *uint32) error
+
+func (c *App) withHandle(key, value *uint32, f Handle) error {
+	if err := c.objs.xdppingcountMaps.CounterMap.Lookup(key, value); err != nil {
+		fmt.Printf("next ket error %s\r\n", err)
+		return nil
 	}
-	return f(k, v)
+	return f(key, value)
 }

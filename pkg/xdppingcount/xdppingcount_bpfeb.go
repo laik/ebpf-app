@@ -62,6 +62,7 @@ type xdppingcountProgramSpecs struct {
 // It can be passed ebpf.CollectionSpec.Assign.
 type xdppingcountMapSpecs struct {
 	CounterMap *ebpf.MapSpec `ebpf:"counter_map"`
+	OtherMap   *ebpf.MapSpec `ebpf:"other_map"`
 }
 
 // xdppingcountObjects contains all objects after they have been loaded into the kernel.
@@ -84,11 +85,13 @@ func (o *xdppingcountObjects) Close() error {
 // It can be passed to loadXdppingcountObjects or ebpf.CollectionSpec.LoadAndAssign.
 type xdppingcountMaps struct {
 	CounterMap *ebpf.Map `ebpf:"counter_map"`
+	OtherMap   *ebpf.Map `ebpf:"other_map"`
 }
 
 func (m *xdppingcountMaps) Close() error {
 	return _XdppingcountClose(
 		m.CounterMap,
+		m.OtherMap,
 	)
 }
 

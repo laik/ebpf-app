@@ -19,6 +19,7 @@ func (c *App) addXdpToLink(intfs []string) error {
 			errs = multierror.Append(errs, err)
 		}
 	}
+	c.links = intfs
 
 	return errs
 }
