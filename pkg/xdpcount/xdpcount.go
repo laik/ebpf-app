@@ -2,6 +2,7 @@ package xdpcount
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -51,9 +52,12 @@ func (c *App) cleanup() error {
 	return errs
 }
 
-func (c *App) Launch(ctx context.Context, links []string) {
+func (c *App) Launch(ctx context.Context, links []string) error {
 	if err := c.addXdpToLink(links); err != nil {
-		log.Fatalf("Failed to set up XDP on links: %s", err)
+		return fmt.Errorf("Failed to set up XDP on links: %s", err)
+	}
+	if err := c.objs.xdpcountMaps.XdpStatsMap.Pin("/sys/fs/bpf/xdp/globals/xdp_stats_map"); err != nil {
+		return fmt.Errorf("pin map error: %s", err)
 	}
 
 	ticker := time.NewTicker(1 * time.Second)
@@ -62,14 +66,28 @@ func (c *App) Launch(ctx context.Context, links []string) {
 		case <-ctx.Done():
 			log.Printf("ctx.Done")
 			if err := c.cleanup(); err != nil {
-				log.Fatalf("Cleanup Failed: %s", err)
+				return fmt.Errorf("Cleanup Failed: %s", err)
 			}
-			return
+			return nil
 		case <-ticker.C:
 			c.printResult()
 		}
 	}
 }
 
+const XDP_PASS = uint32(2)
+
+type S struct {
+	RxPackage uint64
+	RxBytes   uint64
+}
+
 func (c *App) printResult() {
+	s := &S{}
+	err := c.objs.xdpcountMaps.XdpStatsMap.Lookup(XDP_PASS, s)
+	if err != nil {
+		log.Fatalf("Lookup XDP_PASS Failed: %s", err)
+	}
+
+	log.Printf("rx package %d rx bytes %d\r\n", s.RxPackage, s.RxBytes)
 }
