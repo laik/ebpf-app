@@ -8,6 +8,7 @@
 struct datarec
 {
     __u64 rx_packets;
+    __u64 rx_bytes;
     /* Assignment#1: Add byte counters */
 };
 
@@ -25,8 +26,8 @@ struct bpf_map_def SEC("maps") xdp_stats_map = {
 SEC("xdp_stats1")
 int xdp_stats1_func(struct xdp_md *ctx)
 {
-    // void *data_end = (void *)(long)ctx->data_end;
-    // void *data = (void *)(long)ctx->data;
+    void *data_end = (void *)(long)ctx->data_end;
+    void *data = (void *)(long)ctx->data;
 
     struct datarec *rec;
     __u32 key = XDP_PASS; /* XDP_PASS = 2 */
@@ -36,8 +37,11 @@ int xdp_stats1_func(struct xdp_md *ctx)
         return XDP_ABORTED;
 
     lock_xadd(&rec->rx_packets, 1);
+    lock_xadd(&rec->rx_bytes, data_end - data + 1);
 
-    bpfprintf("test %d", 1234);
+    bpf_map_update_elem(&xdp_stats_map, &key, rec, BPF_ANY);
+
+    bpfprintf("recv package %d bytes %d \r\n", rec->rx_packets, rec->rx_bytes);
 
     return XDP_PASS;
 }
