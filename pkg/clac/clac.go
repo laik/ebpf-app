@@ -1,4 +1,4 @@
-package xdpcount
+package clac
 
 import (
 	"context"
@@ -11,17 +11,16 @@ import (
 	"github.com/laik/ebpf-app/pkg/common"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go xdpcount ../../ebpf/src/xdpcount.c -- -I../../ebpf/libbpf/src -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go clac ../../ebpf/src/clac.c -- -I../../ebpf/libbpf/src -O2 -Wall
 
-// App stores ebpf programs and maps together with the desired state
 type App struct {
-	objs  *xdpcountObjects
+	objs  *clacObjects
 	links []string
 }
 
-func NewXDPCountApp() (*App, error) {
-	c := &App{
-		objs:  &xdpcountObjects{},
+func NewApp() (*App, error) {
+	app := &App{
+		objs:  &clacObjects{},
 		links: make([]string, 0),
 	}
 
@@ -29,12 +28,19 @@ func NewXDPCountApp() (*App, error) {
 		return nil, err
 	}
 
-	err := loadXdpcountObjects(c.objs, &ebpf.CollectionOptions{})
+	err := loadClacObjects(app.objs, &ebpf.CollectionOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	return c, nil
+	app.objs.clacMaps.ProgMap.Pin("/sys/fs/bpf/xdp/globals/prog_map")
+
+	// setup tail call prog
+	if err := app.objs.clacMaps.ProgMap.Put(uint32(0), uint32(app.objs.clacPrograms.Prog0.FD())); err != nil {
+		return nil, fmt.Errorf("setup prog0 error: %s", err)
+	}
+
+	return app, nil
 }
 
 func (c *App) cleanup() error {
@@ -56,11 +62,6 @@ func (c *App) Launch(ctx context.Context, links []string) error {
 		return fmt.Errorf("Failed to set up XDP on links: %s", err)
 	}
 
-	// if map file exists,then ignore
-	if err := c.objs.xdpcountMaps.XdpStatsMap.Pin("/sys/fs/bpf/xdp/globals/xdp_stats_map"); err != nil {
-		log.Printf("%s\r\n", fmt.Errorf("pin map error: %s", err))
-	}
-
 	ticker := time.NewTicker(1 * time.Second)
 	for {
 		select {
@@ -71,24 +72,7 @@ func (c *App) Launch(ctx context.Context, links []string) error {
 			}
 			return nil
 		case <-ticker.C:
-			c.printResult()
+			// c.printResult()
 		}
 	}
-}
-
-const XDP_PASS = uint32(2)
-
-type S struct {
-	RxPackage uint64
-	RxBytes   uint64
-}
-
-func (c *App) printResult() {
-	s := &S{}
-	err := c.objs.xdpcountMaps.XdpStatsMap.Lookup(XDP_PASS, s)
-	if err != nil {
-		log.Fatalf("Lookup XDP_PASS Failed: %s", err)
-	}
-
-	log.Printf("rx package %d rx bytes %d\r\n", s.RxPackage, s.RxBytes)
 }

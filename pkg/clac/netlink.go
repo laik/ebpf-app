@@ -1,4 +1,4 @@
-package srv6
+package clac
 
 import (
 	"github.com/hashicorp/go-multierror"
@@ -14,7 +14,7 @@ func (c *App) addXdpToLink(intfs []string) error {
 			errs = multierror.Append(errs, err)
 			continue
 		}
-		err = netlink.LinkSetXdpFdWithFlags(*link, c.objs.srv6Programs.Srv6Handler.FD(), common.XdpFlags((*link).Type()))
+		err = netlink.LinkSetXdpFdWithFlags(*link, c.objs.clacPrograms.Prog.FD(), common.XdpFlags((*link).Type()))
 		if err != nil {
 			errs = multierror.Append(errs, err)
 		}

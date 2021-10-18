@@ -65,10 +65,10 @@ func (c *App) pinMap() error {
 		return fmt.Errorf("pin transit_table_v6 map error: %s", err)
 	}
 	if err := c.objs.srv6Maps.TxPort.Pin("/sys/fs/bpf/xdp/globals/tx_port"); err != nil {
-		return fmt.Errorf("pin transit_table_v6 map error: %s", err)
+		return fmt.Errorf("pin tx_port map error: %s", err)
 	}
 	if err := c.objs.srv6Maps.XdpcapHook.Pin("/sys/fs/bpf/xdp/globals/xdpcap_hook"); err != nil {
-		return fmt.Errorf("pin transit_table_v6 map error: %s", err)
+		return fmt.Errorf("pin xdpcap_hook map error: %s", err)
 	}
 
 	return nil
