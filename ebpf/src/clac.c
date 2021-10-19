@@ -14,6 +14,13 @@ struct bpf_map_def SEC("maps") prog_map = {
     .max_entries = MAX_PROG,
 };
 
+struct bpf_map_def SEC("maps") monitor_map = {
+    .type = BPF_MAP_TYPE_RINGBUF,
+    .key_size = sizeof(__u32),
+    .value_size = sizeof(__u32),
+    .max_entries = MAX_PROG,
+};
+
 SEC("xdp")
 int prog(struct xdp_md *ctx)
 {
