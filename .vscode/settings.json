@@ -40,7 +40,8 @@
         "ipv6.h": "c",
         "bpf_helper_defs.h": "c",
         "seg6_local.h": "c",
-        "srv6_consts.h": "c"
+        "srv6_consts.h": "c",
+        "pingcount.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

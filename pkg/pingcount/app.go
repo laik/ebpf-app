@@ -1,4 +1,4 @@
-package xdppingcount
+package pingcount
 
 import (
 	"context"
@@ -10,17 +10,17 @@ import (
 	"github.com/laik/ebpf-app/pkg/common"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go xdppingcount ../../ebpf/src/xdppingcount.c -- -I../../ebpf/common  -O2 -Walls
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go pingcount ../../ebpf/pingcount/pingcount.c -- -I../../ebpf/common  -O2 -Walls
 
 // App stores ebpf programs and maps together with the desired state
 type App struct {
-	objs  *xdppingcountObjects
+	objs  *pingcountObjects
 	links []string
 }
 
 func NewXDPPingCountApp() (*App, error) {
 	c := &App{
-		objs:  &xdppingcountObjects{},
+		objs:  &pingcountObjects{},
 		links: make([]string, 0),
 	}
 
@@ -28,7 +28,7 @@ func NewXDPPingCountApp() (*App, error) {
 		return nil, err
 	}
 
-	err := loadXdppingcountObjects(c.objs, &ebpf.CollectionOptions{})
+	err := loadPingcountObjects(c.objs, &ebpf.CollectionOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +69,10 @@ func (c *App) Launch(ctx context.Context, links []string) {
 			// if err := c.withHandle(&k, &v, h); err != nil {
 			// 	log.Fatalf("Handle Failed: %s", err)
 			// }
-			if err := c.objs.xdppingcountMaps.OtherMap.Put(uint32(123), "wocao"); err != nil {
+			if err := c.objs.pingcountMaps.OtherMap.Put(uint32(123), "wocao"); err != nil {
 				log.Fatalf("put Failed: %s", err)
 			}
-			bs, err := c.objs.xdppingcountMaps.CounterMap.NextKeyBytes(k)
+			bs, err := c.objs.pingcountMaps.CounterMap.NextKeyBytes(k)
 			if err != nil {
 				log.Fatalf("Handle Failed: %s", err)
 			}
@@ -89,7 +89,7 @@ func h(k, v *uint32) error {
 type Handle func(k, v *uint32) error
 
 func (c *App) withHandle(key, value *uint32, f Handle) error {
-	if err := c.objs.xdppingcountMaps.CounterMap.Lookup(key, value); err != nil {
+	if err := c.objs.pingcountMaps.CounterMap.Lookup(key, value); err != nil {
 		fmt.Printf("next ket error %s\r\n", err)
 		return nil
 	}

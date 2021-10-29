@@ -1,4 +1,4 @@
-package xdppingcount
+package pingcount
 
 import (
 	"github.com/hashicorp/go-multierror"
@@ -14,7 +14,8 @@ func (c *App) addXdpToLink(intfs []string) error {
 			errs = multierror.Append(errs, err)
 			continue
 		}
-		err = netlink.LinkSetXdpFdWithFlags(*link, c.objs.CounterMap.FD(), common.XdpFlags((*link).Type()))
+		// setup the program attach to link dev
+		err = netlink.LinkSetXdpFdWithFlags(*link, c.objs.XdpPingFunc.FD(), common.XdpFlags((*link).Type()))
 		if err != nil {
 			errs = multierror.Append(errs, err)
 		}

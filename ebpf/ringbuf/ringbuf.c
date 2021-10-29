@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 /* Copyright (c) 2020 Andrii Nakryiko */
-#include <linux/bpf.h>
-#include "bpf_helpers.h"
+#include "../common/vmlinux.h"
+#include "../common/bpf_helpers.h"
 
 #define TASK_COMM_LEN 16
 #define MAX_FILENAME_LEN 512
@@ -12,30 +12,12 @@ struct event
     char comm[TASK_COMM_LEN];
     char filename[MAX_FILENAME_LEN];
 };
-
-struct trace_entry
-{
-    short unsigned int type;
-    unsigned char flags;
-    unsigned char preempt_count;
-    int pid;
-};
-
-struct trace_event_raw_sched_process_exec
-{
-    struct trace_entry ent;
-    unsigned int __data_loc_filename;
-    int pid;
-    int old_pid;
-    char __data[0];
-};
-
-/* BPF ringbuf map */
 struct
 {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
     __uint(max_entries, 256 * 1024 /* 256 KB */);
 } rb SEC(".maps");
+
 
 SEC("tp/sched/sched_process_exec")
 int handle_exec(struct trace_event_raw_sched_process_exec *ctx)

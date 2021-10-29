@@ -10,7 +10,7 @@ import (
 	"github.com/vishvananda/netlink"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go redirect ../../ebpf/src/redirect.c -- -I../../ebpf/common -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go redirect ../../ebpf/redirect/redirect.c -- -I../../ebpf/common -O2 -Wall
 
 // App stores ebpf programs and maps together with the desired state
 type App struct {

@@ -4,6 +4,7 @@
 #include "../common/bpf_endian.h"
 #include "../common/helper.h"
 #include "../common/vmlinux.h"
+#include "pingcount.h"
 
 #define COUNT_MAP_MAX_SIZE 1024
 
@@ -27,8 +28,8 @@ struct bpf_map_def SEC("maps") other_map = {
     .max_entries = COUNT_MAP_MAX_SIZE,
 };
 
-SEC("counter")
-int xdp_counter(struct xdp_md *ctx)
+SEC("xdp_ping")
+int xdp_ping_func(struct xdp_md *ctx)
 {
     __u32 key = 123;
     char value[5] = "wocao";
