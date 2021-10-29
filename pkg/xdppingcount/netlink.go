@@ -14,7 +14,7 @@ func (c *App) addXdpToLink(intfs []string) error {
 			errs = multierror.Append(errs, err)
 			continue
 		}
-		err = netlink.LinkSetXdpFdWithFlags(*link, c.objs.XpdPingCountFunc.FD(), common.XdpFlags((*link).Type()))
+		err = netlink.LinkSetXdpFdWithFlags(*link, c.objs.CounterMap.FD(), common.XdpFlags((*link).Type()))
 		if err != nil {
 			errs = multierror.Append(errs, err)
 		}

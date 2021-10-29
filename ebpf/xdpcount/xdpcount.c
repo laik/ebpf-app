@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#include <linux/bpf.h>
+#include "../common/vmlinux.h"
 // local dependence
 #include "../common/bpf_helpers.h"
 #include "../common/bpf_endian.h"

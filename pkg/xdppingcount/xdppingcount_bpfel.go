@@ -54,7 +54,6 @@ type xdppingcountSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type xdppingcountProgramSpecs struct {
-	XpdPingCountFunc *ebpf.ProgramSpec `ebpf:"xpd_ping_count_func"`
 }
 
 // xdppingcountMapSpecs contains maps before they are loaded into the kernel.
@@ -99,13 +98,10 @@ func (m *xdppingcountMaps) Close() error {
 //
 // It can be passed to loadXdppingcountObjects or ebpf.CollectionSpec.LoadAndAssign.
 type xdppingcountPrograms struct {
-	XpdPingCountFunc *ebpf.Program `ebpf:"xpd_ping_count_func"`
 }
 
 func (p *xdppingcountPrograms) Close() error {
-	return _XdppingcountClose(
-		p.XpdPingCountFunc,
-	)
+	return _XdppingcountClose()
 }
 
 func _XdppingcountClose(closers ...io.Closer) error {

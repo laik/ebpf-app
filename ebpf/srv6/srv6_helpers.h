@@ -1,20 +1,25 @@
 #ifndef __SRV6_HELPERS_H
 #define __SRV6_HELPERS_H
 
-#include <stdbool.h>
-#include <linux/types.h>
-#include <linux/bpf.h>
-#include <linux/if_ether.h>
-#include <linux/ip.h>
-#include <linux/udp.h>
-#include <linux/ipv6.h>
-#include <linux/socket.h>
-#include <linux/seg6.h>
-#include <linux/seg6_local.h>
-
-#include "bpf_helpers.h"
-#include "bpf_endian.h"
+// #include <stdbool.h>
+// #include <linux/types.h>
+// #include <linux/bpf.h>
+// #include <linux/if_ether.h>
+// #include <linux/ip.h>
+// #include <linux/udp.h>
+// #include <linux/ipv6.h>
+// #include <linux/socket.h>
+// #include <linux/seg6.h>
+// #include <linux/seg6_local.h>
+#include "../common/vmlinux.h"
+#include "../common/bpf_helpers.h"
+#include "../common/bpf_endian.h"
+#include "../common/helper.h"
 #include "srv6_consts.h"
+
+#ifndef ETH_ALEN
+#define ETH_ALEN 6
+#endif
 
 __attribute__((__always_inline__)) static inline void read_v6addr_in_pyload(
     __u8 *payload, struct in6_addr *v6addr, __u16 payload_size, __u16 offset, __u16 shift)
@@ -261,7 +266,7 @@ __attribute__((__always_inline__)) static inline struct srhhdr *get_srh(struct x
     void *data_end = (void *)(long)xdp->data_end;
 
     struct srhhdr *srh;
-    int len, srhoff = 0;
+    // int len, srhoff = 0;
 
     srh = data + sizeof(struct ethhdr) + sizeof(struct ipv6hdr);
     if (srh + 1 > data_end)
@@ -452,7 +457,7 @@ __attribute__((__always_inline__)) static inline int rewrite_nexthop(struct xdp_
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
-    struct ethhdr *eth = data;
+    // struct ethhdr *eth = data;
 
     if (data + 1 > data_end)
         return XDP_PASS;

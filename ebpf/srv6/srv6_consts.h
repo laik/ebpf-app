@@ -1,6 +1,6 @@
 #ifndef __SRV6_CONSTS_H
 #define __SRV6_CONSTS_H
-#include "bpf_endian.h"
+#include "../common/bpf_endian.h"
 
 // user define fib ctl value
 #define NextFIBCheck 10000

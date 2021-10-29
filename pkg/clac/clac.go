@@ -11,7 +11,7 @@ import (
 	"github.com/laik/ebpf-app/pkg/common"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go clac ../../ebpf/src/clac.c -- -I../../ebpf/libbpf/src -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go clac ../../ebpf/clac/clac.c -- -I../../ebpf/common -O2 -Wall
 
 type App struct {
 	objs  *clacObjects

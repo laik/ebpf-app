@@ -1,8 +1,9 @@
 #ifndef __PGWU_MAPS_H
 #define __PGWU_MAPS_H
 
-#include <linux/bpf.h>
-#include "bpf_helpers.h"
+// #include <linux/bpf.h>
+#include "../common/vmlinux.h"
+#include "../common/bpf_helpers.h"
 #include "srv6_consts.h"
 #include "srv6_structs.h"
 #include "hook.h"

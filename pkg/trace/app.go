@@ -17,7 +17,7 @@ import (
 */
 import "C"
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go trace ../../ebpf/trace/trace.c -- -I../../ebpf/libbpf/src -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go trace ../../ebpf/trace/trace.c -- -I../../ebpf/common -O2 -Wall
 type App struct {
 	objs    *traceObjects
 	links   []string

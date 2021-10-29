@@ -2,8 +2,9 @@
 #define __SRV6_STRUCTS_H
 #include "srv6_consts.h"
 
-#include <linux/types.h>
-#include <linux/in6.h> /* For struct in6_addr. */
+// #include <linux/types.h>
+// #include <linux/in6.h> /* For struct in6_addr. */
+#include "../common/vmlinux.h"
 
 struct v6addr_heep
 {
@@ -69,45 +70,6 @@ struct srhhdr
     // __u8 gtpMessageType : 4; // least significant 4 bits of tag field
     struct in6_addr segments[0];
 };
-
-/*
- * 	struct vlan_hdr - vlan header
- * 	@h_vlan_TCI: priority and VLAN ID
- *	@h_vlan_encapsulated_proto: packet type ID or len
- */
-struct vlan_hdr
-{
-    __u16 h_vlan_TCI;
-    __u16 h_vlan_encapsulated_proto;
-};
-
-// struct gtpu_exthdr
-// {
-//     __u16 seq;
-//     __u8 npdu_num;
-//     __u8 nextexthdr;
-// };
-
-// struct gtp1_pdu_session_t
-// {
-//     __u8 exthdrlen;
-//     __u8 type : 4;
-//     __u8 spare : 4;
-//     union
-//     {
-//         struct gtpu_qfi_bits
-//         {
-//             __u8 p : 1;
-//             __u8 r : 1;
-//             __u8 qfi : 6;
-//         } bits;
-
-//         __u8 val;
-//     } u;
-
-//     struct gtpu_exthdr paging[0];
-//     __u8 nextexthdr;
-// };
 
 /* According to 3GPP TS 29.060. */
 struct gtp1hdr

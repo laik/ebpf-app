@@ -1,4 +1,3 @@
-#include <linux/bpf.h>
 #include "../common/bpf_helpers.h"
 #include "../common/helper.h"
 #include "trace.h"

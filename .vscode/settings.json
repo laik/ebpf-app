@@ -38,7 +38,9 @@
         "if_link.h": "c",
         "common_params.h": "c",
         "ipv6.h": "c",
-        "bpf_helper_defs.h": "c"
+        "bpf_helper_defs.h": "c",
+        "seg6_local.h": "c",
+        "srv6_consts.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

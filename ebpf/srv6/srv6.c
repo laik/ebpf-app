@@ -1,19 +1,7 @@
 #define KBUILD_MODNAME "xdp_srv6_functions"
-#include <stdbool.h>
-#include <stddef.h>
-#include <linux/bpf.h>
-#include <linux/in.h>
-#include <linux/if_ether.h>
-#include <linux/if_packet.h>
-#include <linux/if_vlan.h>
-#include <linux/ip.h>
-#include <linux/ipv6.h>
-#include <linux/socket.h>
-#include <linux/seg6.h>
-#include <linux/seg6_local.h>
-#include <linux/udp.h>
-#include "bpf_helpers.h"
-#include "bpf_endian.h"
+#include "../common/vmlinux.h"
+#include "../common/bpf_helpers.h"
+#include "../common/bpf_endian.h"
 
 #include "srv6_consts.h"
 #include "srv6_structs.h"
@@ -24,8 +12,8 @@
 /* regular endpoint function */
 __attribute__((__always_inline__)) static inline int action_end(struct xdp_md *xdp)
 {
-    void *data = (void *)(long)xdp->data;
-    void *data_end = (void *)(long)xdp->data_end;
+    // void *data = (void *)(long)xdp->data;
+    // void *data_end = (void *)(long)xdp->data_end;
 
     struct srhhdr *srhdr = get_and_validate_srh(xdp);
     struct ipv6hdr *v6h = get_ipv6(xdp);
@@ -76,8 +64,8 @@ __attribute__((__always_inline__)) static inline int action_enddx4(struct xdp_md
         return rc;
     }
 
-    void *data_end = (void *)(unsigned long)xdp->data_end;
-    void *data = (void *)(unsigned long)xdp->data;
+    // void *data_end = (void *)(unsigned long)xdp->data_end;
+    // void *data = (void *)(unsigned long)xdp->data;
     struct iphdr *iph = get_ipv4(xdp);
 
     if (!iph)
@@ -173,7 +161,7 @@ __attribute__((__always_inline__)) static inline int transit_gtp4_encap(struct x
     struct iphdr *iph = get_ipv4(xdp);
     __u8 type;
     __u32 tid;
-    __u16 seqNum;
+    // __u16 seqNum;
     struct ipv6hdr *v6h;
     struct srhhdr *srh;
     __u8 srh_len;

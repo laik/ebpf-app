@@ -1,4 +1,4 @@
-#include <linux/bpf.h>
+#include "../common/vmlinux.h"
 #include "../common/bpf_helpers.h"
 
 #define XDP_REDIRECT_MAP_SIZE 1024

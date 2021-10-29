@@ -1,7 +1,7 @@
 #ifndef XDPCAP_HOOK_H
 #define XDPCAP_HOOK_H
 
-#include <linux/bpf.h>
+#include "../common/vmlinux.h"
 
 /**
  * Create a bpf map suitable for use as an xdpcap hook point.
