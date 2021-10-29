@@ -1,18 +1,17 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#include <linux/bpf.h>
-#include <bpf_helpers.h>
-#include <linux/in.h>
-#include <bpf_endian.h>
 
-#include "parsing_helpers.h"
-#include "helper.h"
+#include "../common/bpf_helpers.h"
+#include "../common/bpf_endian.h"
+#include "../common/parsing_helpers.h"
+#include "../common/helper.h"
+#include "../common/vmlinux.h"
 
 #define COUNT_MAP_MAX_SIZE 1024
 
 struct S
 {
-    unsigned char dest[ETH_ALEN];
-    unsigned char src[ETH_ALEN];
+    unsigned char dest[6]; // ETH_ALEN
+    unsigned char src[6];
 } __packed;
 
 struct bpf_map_def SEC("maps") counter_map = {

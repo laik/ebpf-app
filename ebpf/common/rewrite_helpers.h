@@ -8,13 +8,9 @@
 #ifndef __REWRITE_HELPERS_H
 #define __REWRITE_HELPERS_H
 
-#include <linux/bpf.h>
-#include <linux/ip.h>
-#include <linux/ipv6.h>
-#include <linux/if_ether.h>
-
-#include <bpf/bpf_helpers.h>
-#include <bpf/bpf_endian.h>
+#include "vmlinux.h"
+#include "bpf_helpers.h"
+#include "bpf_endian.h"
 
 /* Pops the outermost VLAN tag off the packet. Returns the popped VLAN ID on
  * success or negative errno on failure.
@@ -67,7 +63,7 @@ static __always_inline int vlan_tag_pop(struct xdp_md *ctx, struct ethhdr *eth)
  * -1 on failure.
  */
 static __always_inline int vlan_tag_push(struct xdp_md *ctx,
-		struct ethhdr *eth, int vlid)
+										 struct ethhdr *eth, int vlid)
 {
 	void *data_end = (void *)(long)ctx->data_end;
 	struct ethhdr eth_cpy;
@@ -112,11 +108,11 @@ static __always_inline int vlan_tag_push(struct xdp_md *ctx,
  */
 static __always_inline void swap_src_dst_mac(struct ethhdr *eth)
 {
-	__u8 h_tmp[ETH_ALEN];
+	__u8 h_tmp[6];
 
-	__builtin_memcpy(h_tmp, eth->h_source, ETH_ALEN);
-	__builtin_memcpy(eth->h_source, eth->h_dest, ETH_ALEN);
-	__builtin_memcpy(eth->h_dest, h_tmp, ETH_ALEN);
+	__builtin_memcpy(h_tmp, eth->h_source, 6);
+	__builtin_memcpy(eth->h_source, eth->h_dest, 6);
+	__builtin_memcpy(eth->h_dest, h_tmp, 6);
 }
 
 /*

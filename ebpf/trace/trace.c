@@ -1,5 +1,5 @@
 #include <linux/bpf.h>
-#include <bpf_helpers.h>
+#include "../common/bpf_helpers.h"
 #include "../common/helper.h"
 #include "trace.h"
 

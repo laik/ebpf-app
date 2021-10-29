@@ -1,11 +1,11 @@
 # XDPCOUNT_TARGETS  	  := xdp_ping_count
-XDP_TARGETS  := ringbuf
+XDP_TARGETS  := xdp_ping_count
 
 LLC ?= llc
 CLANG ?= clang
 CC := gcc
 
-LIBBPF_DIR = ../libbpf/src
+LIBBPF_DIR = ../common
 COMMON_DIR = ../common
 
 include $(COMMON_DIR)/common.mk

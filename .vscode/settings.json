@@ -34,7 +34,11 @@
         "stddef.h": "c",
         "datastrct_define.h": "c",
         "vmlinux.h": "c",
-        "trace.h": "c"
+        "trace.h": "c",
+        "if_link.h": "c",
+        "common_params.h": "c",
+        "ipv6.h": "c",
+        "bpf_helper_defs.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

@@ -2,14 +2,6 @@
 # --------------------------------------------------
 # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 #
-# This file should be included from your Makefile like:
-#  COMMON_DIR = ../common/
-#  include $(COMMON_DIR)/common.mk
-#
-# It is expected that you define the variables:
-#  XDP_TARGETS and USER_TARGETS
-# as a space-separated list
-#
 LLC ?= llc
 CLANG ?= clang
 CC ?= gcc
@@ -20,80 +12,7 @@ USER_C := ${USER_TARGETS:=.c}
 USER_OBJ := ${USER_C:.c=.o}
 
 # Expect this is defined by including Makefile, but define if not
-COMMON_DIR ?= ../common/
-LIBBPF_DIR ?= ../libbpf/src/
-
-COPY_LOADER ?=
-LOADER_DIR ?= $(COMMON_DIR)/../basic-solutions
-
-OBJECT_LIBBPF = $(LIBBPF_DIR)/libbpf.a
-
-# Extend if including Makefile already added some
-COMMON_OBJS += $(COMMON_DIR)/common_params.o $(COMMON_DIR)/common_user_bpf_xdp.o
-
-# Create expansions for dependencies
-COMMON_H := ${COMMON_OBJS:.o=.h}
-
-EXTRA_DEPS +=
-
-# BPF-prog kern and userspace shares struct via header file:
-KERN_USER_H ?= $(wildcard common_kern_user.h)
-
-CFLAGS ?= -I$(LIBBPF_DIR)/src/ -g
-LDFLAGS ?= -L$(LIBBPF_DIR)
-
-BPF_CFLAGS ?= -I$(LIBBPF_DIR)/
-# ARM64_LIB = /usr/include/aarch64-linux-gnu/
-# BPF_CFLAGS += -I$(ARM64_LIB)
-
-LIBS = -l:libbpf.a -lelf $(USER_LIBS)
-
-all: llvm-check $(USER_TARGETS) $(XDP_OBJ) $(COPY_LOADER) $(COPY_STATS)
-
-.PHONY: clean $(CLANG) $(LLC)
-
-clean:
-	rm -rf $(LIBBPF_DIR)/build
-	$(MAKE) -C $(LIBBPF_DIR) clean
-	$(MAKE) -C $(COMMON_DIR) clean
-	rm -f $(USER_TARGETS) $(XDP_OBJ) $(USER_OBJ) $(COPY_LOADER) $(COPY_STATS)
-	rm -f *.ll
-	rm -f *~
-
-ifdef COPY_LOADER
-$(COPY_LOADER): $(LOADER_DIR)/${COPY_LOADER:=.c} $(COMMON_H)
-	make -C $(LOADER_DIR) $(COPY_LOADER)
-	cp $(LOADER_DIR)/$(COPY_LOADER) $(COPY_LOADER)
-endif
-
-ifdef COPY_STATS
-$(COPY_STATS): $(LOADER_DIR)/${COPY_STATS:=.c} $(COMMON_H)
-	make -C $(LOADER_DIR) $(COPY_STATS)
-	cp $(LOADER_DIR)/$(COPY_STATS) $(COPY_STATS)
-# Needing xdp_stats imply depending on header files:
-EXTRA_DEPS += $(COMMON_DIR)/xdp_stats_kern.h $(COMMON_DIR)/xdp_stats_kern_user.h
-endif
-
-# For build dependency on this file, if it gets updated
-COMMON_MK = $(COMMON_DIR)/common.mk
-
-llvm-check: $(CLANG) $(LLC)
-	@for TOOL in $^ ; do \
-		if [ ! $$(command -v $${TOOL} 2>/dev/null) ]; then \
-			echo "*** ERROR: Cannot find tool $${TOOL}" ;\
-			exit 1; \
-		else true; fi; \
-	done
-
-$(OBJECT_LIBBPF):
-	@if [ ! -d $(LIBBPF_DIR) ]; then \
-		echo "Error: Need libbpf submodule"; \
-		echo "May need to run git submodule update --init"; \
-		exit 1; \
-	else \
-		cd $(LIBBPF_DIR) && $(MAKE) all OBJDIR=.; \
-		mkdir -p build; $(MAKE) install_headers DESTDIR=build OBJDIR=.; \
-	fi
+COMMON_DIR ?= common
 
 # Create dependency: detect if C-file change and touch H-file, to trigger
 # target $(COMMON_OBJS)
@@ -120,3 +39,7 @@ $(XDP_OBJ): %.o: %.c  Makefile $(COMMON_MK) $(KERN_USER_H) $(EXTRA_DEPS) $(OBJEC
 	    -Werror \
 	    -O2 -emit-llvm -c -g -o ${@:.o=.ll} $<
 	$(LLC) -march=bpf -filetype=obj -o $@ ${@:.o=.ll}
+
+clean:
+	rm -rf *.ll
+	rm -rf *.o
