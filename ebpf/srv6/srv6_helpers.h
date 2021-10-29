@@ -1,16 +1,6 @@
 #ifndef __SRV6_HELPERS_H
 #define __SRV6_HELPERS_H
 
-// #include <stdbool.h>
-// #include <linux/types.h>
-// #include <linux/bpf.h>
-// #include <linux/if_ether.h>
-// #include <linux/ip.h>
-// #include <linux/udp.h>
-// #include <linux/ipv6.h>
-// #include <linux/socket.h>
-// #include <linux/seg6.h>
-// #include <linux/seg6_local.h>
 #include "../common/vmlinux.h"
 #include "../common/bpf_helpers.h"
 #include "../common/bpf_endian.h"
@@ -21,7 +11,7 @@
 #define ETH_ALEN 6
 #endif
 
-__attribute__((__always_inline__)) static inline void read_v6addr_in_pyload(
+static inline void read_v6addr_in_pyload(
     __u8 *payload, struct in6_addr *v6addr, __u16 payload_size, __u16 offset, __u16 shift)
 {
     offset = offset & 0xf;
@@ -71,7 +61,7 @@ __attribute__((__always_inline__)) static inline void read_v6addr_in_pyload(
     }
 }
 
-__attribute__((__always_inline__)) static inline void read_v6addr_in_pkt_pyload(
+static inline void read_v6addr_in_pkt_pyload(
     __u8 *payload, struct in6_addr *v6addr, __u16 payload_size, __u16 offset, __u16 shift, const __u32 *data_end)
 {
     offset = offset & 0xffff;
@@ -110,7 +100,7 @@ __attribute__((__always_inline__)) static inline void read_v6addr_in_pkt_pyload(
     }
 }
 
-__attribute__((__always_inline__)) static inline void write_v6addr_in_pyload(
+static inline void write_v6addr_in_pyload(
     struct in6_addr *v6addr, __u8 *payload, __u16 payload_size, __u16 offset, __u16 shift, const __u32 *data_end)
 {
     offset = offset & 0xfff;
@@ -151,7 +141,7 @@ __attribute__((__always_inline__)) static inline void write_v6addr_in_pyload(
 }
 
 /* from include/net/ip.h */
-__attribute__((__always_inline__)) static inline int ip_decrease_ttl(struct iphdr *iph)
+static inline int ip_decrease_ttl(struct iphdr *iph)
 {
     __u32 check = (__u32)iph->check;
 
@@ -159,14 +149,14 @@ __attribute__((__always_inline__)) static inline int ip_decrease_ttl(struct iphd
     iph->check = (__sum16)(check + (check >= 0xFFFF));
     return --iph->ttl;
 };
-__attribute__((__always_inline__)) static inline __u16 wrapsum(__u32 sum)
+static inline __u16 wrapsum(__u32 sum)
 {
     sum = ~sum & 0xFFFF;
     return (sum);
 }
 
 // cf. https://github.com/iovisor/bcc/issues/2463#issuecomment-718800510
-__attribute__((__always_inline__)) static inline void ipv4_udp_csum_build(struct udphdr *uh, struct iphdr *iph, __u32 *data_end)
+static inline void ipv4_udp_csum_build(struct udphdr *uh, struct iphdr *iph, __u32 *data_end)
 {
     uh->check = 0;
     __u32 csum = 0;
@@ -199,7 +189,7 @@ __attribute__((__always_inline__)) static inline void ipv4_udp_csum_build(struct
     // uh->check = wrapsum(csum);
 }
 
-__attribute__((__always_inline__)) static inline void csum_build(struct iphdr *iph)
+static inline void csum_build(struct iphdr *iph)
 {
     __u16 *next_iph_u16;
     __u32 csum = 0;
@@ -214,7 +204,7 @@ __attribute__((__always_inline__)) static inline void csum_build(struct iphdr *i
 }
 
 /* Function to set source and destination mac of the packet */
-__attribute__((__always_inline__)) static inline void set_src_dst_mac(void *data, void *src, void *dst)
+static inline void set_src_dst_mac(void *data, void *src, void *dst)
 {
     unsigned short *source = src;
     unsigned short *dest = dst;
@@ -224,7 +214,7 @@ __attribute__((__always_inline__)) static inline void set_src_dst_mac(void *data
     __builtin_memcpy(p + 3, source, ETH_ALEN);
 }
 
-__attribute__((__always_inline__)) static inline struct ethhdr *get_eth(struct xdp_md *xdp)
+static inline struct ethhdr *get_eth(struct xdp_md *xdp)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
@@ -235,7 +225,7 @@ __attribute__((__always_inline__)) static inline struct ethhdr *get_eth(struct x
 
     return eth;
 }
-__attribute__((__always_inline__)) static inline struct ipv6hdr *get_ipv6(struct xdp_md *xdp)
+static inline struct ipv6hdr *get_ipv6(struct xdp_md *xdp)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
@@ -248,7 +238,7 @@ __attribute__((__always_inline__)) static inline struct ipv6hdr *get_ipv6(struct
     return v6h;
 };
 
-__attribute__((__always_inline__)) static inline struct iphdr *get_ipv4(struct xdp_md *xdp)
+static inline struct iphdr *get_ipv4(struct xdp_md *xdp)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
@@ -260,7 +250,7 @@ __attribute__((__always_inline__)) static inline struct iphdr *get_ipv4(struct x
     return iph;
 };
 
-__attribute__((__always_inline__)) static inline struct srhhdr *get_srh(struct xdp_md *xdp)
+static inline struct srhhdr *get_srh(struct xdp_md *xdp)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
@@ -278,7 +268,7 @@ __attribute__((__always_inline__)) static inline struct srhhdr *get_srh(struct x
     return srh;
 }
 
-__attribute__((__always_inline__)) static inline struct udphdr *get_v4_udp(struct xdp_md *xdp)
+static inline struct udphdr *get_v4_udp(struct xdp_md *xdp)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
@@ -291,7 +281,7 @@ __attribute__((__always_inline__)) static inline struct udphdr *get_v4_udp(struc
     return uh;
 };
 
-__attribute__((__always_inline__)) static inline struct gtp1hdr *get_v4_gtp1(struct xdp_md *xdp)
+static inline struct gtp1hdr *get_v4_gtp1(struct xdp_md *xdp)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
@@ -304,7 +294,7 @@ __attribute__((__always_inline__)) static inline struct gtp1hdr *get_v4_gtp1(str
     return gtp1;
 };
 
-__attribute__((__always_inline__)) static inline struct srhhdr *get_and_validate_srh(struct xdp_md *xdp)
+static inline struct srhhdr *get_and_validate_srh(struct xdp_md *xdp)
 {
     struct srhhdr *srh;
 
@@ -324,7 +314,7 @@ __attribute__((__always_inline__)) static inline struct srhhdr *get_and_validate
     return srh;
 }
 
-__attribute__((__always_inline__)) static inline bool advance_nextseg(struct srhhdr *srh, struct in6_addr *daddr, struct xdp_md *xdp)
+static inline bool advance_nextseg(struct srhhdr *srh, struct in6_addr *daddr, struct xdp_md *xdp)
 {
     struct in6_addr *addr;
     void *data_end = (void *)(long)xdp->data_end;
@@ -341,7 +331,7 @@ __attribute__((__always_inline__)) static inline bool advance_nextseg(struct srh
     return true;
 }
 
-__attribute__((__always_inline__)) static inline bool lookup_nexthop(struct xdp_md *xdp, void *smac, void *dmac, __u32 *ifindex, __u32 flag)
+static inline bool lookup_nexthop(struct xdp_md *xdp, void *smac, void *dmac, __u32 *ifindex, __u32 flag)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
@@ -453,7 +443,7 @@ __attribute__((__always_inline__)) static inline bool lookup_nexthop(struct xdp_
     return false;
 }
 
-__attribute__((__always_inline__)) static inline int rewrite_nexthop(struct xdp_md *xdp, __u32 flag)
+static inline int rewrite_nexthop(struct xdp_md *xdp, __u32 flag)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;

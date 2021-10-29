@@ -5,6 +5,7 @@
 // #include <linux/types.h>
 // #include <linux/in6.h> /* For struct in6_addr. */
 #include "../common/vmlinux.h"
+#include "../common/helper.h"
 
 struct v6addr_heep
 {
@@ -108,6 +109,6 @@ struct args_mob_session
             __u16 padding;
         } seq;
     } session;
-} __attribute__((packed));
+} __packed;
 
 #endif

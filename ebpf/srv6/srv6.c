@@ -10,7 +10,7 @@
 // #include "srv6_transit.h"
 
 /* regular endpoint function */
-__attribute__((__always_inline__)) static inline int action_end(struct xdp_md *xdp)
+ static inline int action_end(struct xdp_md *xdp)
 {
     // void *data = (void *)(long)xdp->data;
     // void *data_end = (void *)(long)xdp->data_end;
@@ -27,7 +27,7 @@ __attribute__((__always_inline__)) static inline int action_end(struct xdp_md *x
     return rewrite_nexthop(xdp, 0);
 }
 
-__attribute__((__always_inline__)) static inline int base_decap(struct xdp_md *xdp, __u16 proto)
+ static inline int base_decap(struct xdp_md *xdp, __u16 proto)
 {
     void *data_end = (void *)(unsigned long)xdp->data_end;
     void *data = (void *)(unsigned long)xdp->data;
@@ -56,7 +56,7 @@ __attribute__((__always_inline__)) static inline int base_decap(struct xdp_md *x
     return NextFIBCheck;
 }
 
-__attribute__((__always_inline__)) static inline int action_enddx4(struct xdp_md *xdp, struct end_function *ef)
+ static inline int action_enddx4(struct xdp_md *xdp, struct end_function *ef)
 {
     int rc = base_decap(xdp, ETH_P_IPV4);
     if (rc != NextFIBCheck)
@@ -78,7 +78,7 @@ __attribute__((__always_inline__)) static inline int action_enddx4(struct xdp_md
     return rewrite_nexthop(xdp, 0);
 }
 
-__attribute__((__always_inline__)) static inline int base_encap(struct xdp_md *xdp, struct transit_behavior *tb, __u8 nexthdr, __u16 innerlen)
+ static inline int base_encap(struct xdp_md *xdp, struct transit_behavior *tb, __u8 nexthdr, __u16 innerlen)
 {
     void *data = (void *)(long)xdp->data;
     void *data_end = (void *)(long)xdp->data_end;
@@ -145,7 +145,7 @@ __attribute__((__always_inline__)) static inline int base_encap(struct xdp_md *x
     return NextFIBCheck;
 }
 
-__attribute__((__always_inline__)) static inline int transit_encap(struct xdp_md *xdp, struct transit_behavior *tb, __u8 nexthdr, __u8 innerlen)
+ static inline int transit_encap(struct xdp_md *xdp, struct transit_behavior *tb, __u8 nexthdr, __u8 innerlen)
 {
     int rc = base_encap(xdp, tb, nexthdr, innerlen);
     if (rc == NextFIBCheck)
@@ -153,7 +153,7 @@ __attribute__((__always_inline__)) static inline int transit_encap(struct xdp_md
     return rc;
 }
 
-__attribute__((__always_inline__)) static inline int transit_gtp4_encap(struct xdp_md *xdp, struct transit_behavior *tb)
+ static inline int transit_gtp4_encap(struct xdp_md *xdp, struct transit_behavior *tb)
 {
     // chack UDP/GTP packet
     void *data = (void *)(unsigned long)xdp->data;
@@ -298,7 +298,7 @@ __attribute__((__always_inline__)) static inline int transit_gtp4_encap(struct x
     return rewrite_nexthop(xdp, BPF_FIB_LOOKUP_OUTPUT);
 }
 
-__attribute__((__always_inline__)) static inline int
+ static inline int
 action_end_m_gtp4_e(struct xdp_md *xdp, struct end_function *ef)
 {
     void *data_end = (void *)(unsigned long)xdp->data_end;

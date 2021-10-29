@@ -9,7 +9,7 @@ struct bpf_map_def SEC("maps") prog_map = {
     .max_entries = MAX_PROG,
 };
 
-__attribute__((__always_inline__)) static inline int prog_chioce(struct xdp_md *ctx)
+static inline int prog_chioce(struct xdp_md *ctx)
 {
     return UNKONW;
 }
