@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/laik/ebpf-app/pkg/clac"
+	"github.com/laik/ebpf-app/pkg/ringbuf"
 	"github.com/laik/ebpf-app/utils"
 	flag "github.com/spf13/pflag"
 )
@@ -28,7 +28,7 @@ func Run(commit string) error {
 		utils.PrintVersion(commit)
 	}
 
-	app, err := clac.NewApp()
+	app, err := ringbuf.NewApp()
 	if err != nil {
 		return fmt.Errorf("Loading eBPF: %s", err)
 	}

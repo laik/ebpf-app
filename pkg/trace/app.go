@@ -1,4 +1,4 @@
-package clac
+package trace
 
 import (
 	"context"
@@ -9,26 +9,29 @@ import (
 	"github.com/cilium/ebpf"
 	"github.com/hashicorp/go-multierror"
 	"github.com/laik/ebpf-app/pkg/common"
+	"github.com/vishvananda/netlink"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go clac ../../ebpf/src/clac.c -- -I../../ebpf/libbpf/src -O2 -Wall
+/*
+#include "../../ebpf/trace/trace.h"
+*/
+import "C"
 
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go trace ../../ebpf/trace/trace.c -- -I../../ebpf/libbpf/src -O2 -Wall
 type App struct {
-	objs  *clacObjects
-	links []string
+	objs    *traceObjects
+	links   []string
+	linkMap map[string]*netlink.Link
 }
 
 func NewApp() (*App, error) {
-	app := &App{
-		objs:  &clacObjects{},
-		links: make([]string, 0),
-	}
+	app := &App{objs: &traceObjects{}}
 
 	if err := common.IncreaseResourceLimits(); err != nil {
 		return nil, err
 	}
 
-	err := loadClacObjects(app.objs, &ebpf.CollectionOptions{
+	err := loadTraceObjects(app.objs, &ebpf.CollectionOptions{
 		Maps: ebpf.MapOptions{
 			PinPath: "/sys/fs/bpf/xdp/globals",
 		},
@@ -40,8 +43,14 @@ func NewApp() (*App, error) {
 	}
 
 	// setup tail call prog
-	if err := app.objs.clacMaps.ProgMap.Put(uint32(0), uint32(app.objs.clacPrograms.Prog0.FD())); err != nil {
-		return nil, fmt.Errorf("setup prog0 error: %s", err)
+	if err := app.objs.ProgMap.Put(uint32(C.IP_PROG), uint32(app.objs.ProgIp.FD())); err != nil {
+		return nil, fmt.Errorf("setup ip error: %s", err)
+	}
+	if err := app.objs.ProgMap.Put(uint32(C.ARP_PROG), uint32(app.objs.ProgArp.FD())); err != nil {
+		return nil, fmt.Errorf("setup ip error: %s", err)
+	}
+	if err := app.objs.ProgMap.Put(uint32(C.TCP_PROG), uint32(app.objs.ProgTcp.FD())); err != nil {
+		return nil, fmt.Errorf("setup tcp error: %s", err)
 	}
 
 	return app, nil
@@ -79,6 +88,7 @@ func (c *App) Launch(ctx context.Context, links []string) error {
 			c.printResult()
 		}
 	}
+	// return nil
 }
 
 func (c *App) printResult() error {

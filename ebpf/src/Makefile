@@ -1,5 +1,5 @@
 # XDPCOUNT_TARGETS  	  := xdp_ping_count
-XDP_TARGETS  := clac
+XDP_TARGETS  := ringbuf
 
 LLC ?= llc
 CLANG ?= clang

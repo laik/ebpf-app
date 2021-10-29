@@ -18,7 +18,6 @@ type App struct {
 }
 
 func NewClsactApp(input map[string]string) (*App, error) {
-
 	c := &App{
 		objs:    &clsactObjects{},
 		input:   make(map[string]string),
@@ -44,6 +43,8 @@ func NewClsactApp(input map[string]string) (*App, error) {
 }
 
 func (c *App) init() error {
+	// netlink.TcAct
+	// netlink.IpsetDestroy("")
 	return nil
 }
 
