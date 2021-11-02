@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/laik/ebpf-app/pkg/xdppingcount"
+	"github.com/laik/ebpf-app/pkg/pingcount"
 	"github.com/laik/ebpf-app/utils"
 	flag "github.com/spf13/pflag"
 )
@@ -26,7 +26,7 @@ func Run(commit string) error {
 		utils.PrintVersion(commit)
 	}
 
-	app, err := xdppingcount.NewXDPPingCountApp()
+	app, err := pingcount.NewXDPPingCountApp()
 	if err != nil {
 		return fmt.Errorf("Loading eBPF: %s", err)
 	}

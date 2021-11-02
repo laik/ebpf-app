@@ -18,12 +18,13 @@ struct
     __uint(max_entries, 256 * 1024 /* 256 KB */);
 } rb SEC(".maps");
 
-
 SEC("tp/sched/sched_process_exec")
 int handle_exec(struct trace_event_raw_sched_process_exec *ctx)
 {
     unsigned fname_off = ctx->__data_loc_filename & 0xFFFF;
     struct event *e;
+
+    unsigned int ret;
 
     e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
     if (!e)

@@ -1,4 +1,4 @@
-package xdp
+package redirect
 
 import (
 	"github.com/hashicorp/go-multierror"

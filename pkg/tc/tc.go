@@ -8,7 +8,7 @@ import (
 	"github.com/vishvananda/netlink"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go clsact ../../ebpf/src/clsact.c -- -I../../ebpf/common -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go clsact ../../ebpf/clsact/clsact.c -- -I../../ebpf/common -O2 -Wall
 
 // App stores ebpf programs and maps together with the desired state
 type App struct {
@@ -45,6 +45,7 @@ func NewClsactApp(input map[string]string) (*App, error) {
 func (c *App) init() error {
 	// netlink.TcAct
 	// netlink.IpsetDestroy("")
+	
 	return nil
 }
 

@@ -8,7 +8,7 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"github.com/laik/ebpf-app/pkg/xdp"
+	"github.com/laik/ebpf-app/pkg/redirect"
 	"github.com/laik/ebpf-app/utils"
 	"gopkg.in/fsnotify.v1"
 	"gopkg.in/yaml.v2"
@@ -45,7 +45,7 @@ func Run(commit string) error {
 	updateCh := make(chan map[string]string, 1)
 	go configWatcher(*configFlag, updateCh)
 
-	app, err := xdp.NewXDPRedirectApp(cfg.Links)
+	app, err := redirect.NewApp(cfg.Links)
 	if err != nil {
 		return fmt.Errorf("Loading eBPF: %s", err)
 	}

@@ -9,7 +9,7 @@ import (
 	"github.com/laik/ebpf-app/pkg/common"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go ringbuf ../../ebpf/srringbufc/ringbuf.c -- -I../../ebpf/common -O2 -Wall
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go ringbuf ../../ebpf/ringbuf/ringbuf.c -- -I../../ebpf/common -O2 -Wall -Wno-unused-variable
 
 type App struct {
 	objs  *ringbufObjects

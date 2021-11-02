@@ -41,7 +41,14 @@
         "bpf_helper_defs.h": "c",
         "seg6_local.h": "c",
         "srv6_consts.h": "c",
-        "pingcount.h": "c"
+        "pingcount.h": "c",
+        "typeinfo": "c",
+        "srv6_structs.h": "c",
+        "route.h": "c",
+        "fib_rules.h": "c",
+        "rtnetlink.h": "c",
+        "ip_fib.h": "c",
+        "pkt_sched.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

@@ -1,4 +1,4 @@
-package xdp
+package redirect
 
 import (
 	"context"
@@ -21,7 +21,7 @@ type App struct {
 
 // NewXDPRedirectApp sets up the XDP xconnect application
 // Input expects a map between existing pairs of interface names that will be cross-connected.
-func NewXDPRedirectApp(input map[string]string) (*App, error) {
+func NewApp(input map[string]string) (*App, error) {
 	c := &App{
 		objs:    &redirectObjects{},
 		input:   make(map[string]string),
