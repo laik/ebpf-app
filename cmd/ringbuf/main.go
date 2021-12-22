@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	links   = flag.StringArray("links", []string{}, "--links lo,eht0")
+	// links   = flag.StringArray("links", []string{}, "--links lo,eht0")
 	version = flag.Bool("v", false, "Display version")
 )
 
 func Run(commit string) error {
-	fmt.Println("eBPF app")
+	fmt.Println("eBPF ringbuf app")
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -33,7 +33,7 @@ func Run(commit string) error {
 		return fmt.Errorf("Loading eBPF: %s", err)
 	}
 
-	return app.Launch(ctx, *links)
+	return app.Launch(ctx)
 }
 
 var (

@@ -6,6 +6,7 @@ generate:
 	go generate ./...
 
 build: generate
+	go build -o ${BIN}/ringbuf cmd/ringbuf/*.go 
 	go build -o ${BIN}/xdp-redirect cmd/redirect/*.go 
 	go build -o ${BIN}/clsact cmd/tc/*.go 
 	go build -o ${BIN}/xdpcount cmd/xdpcount/*.go 

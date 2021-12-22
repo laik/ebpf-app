@@ -54,13 +54,14 @@ type ringbufSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type ringbufProgramSpecs struct {
+	KprobeExecve *ebpf.ProgramSpec `ebpf:"kprobe_execve"`
 }
 
 // ringbufMapSpecs contains maps before they are loaded into the kernel.
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type ringbufMapSpecs struct {
-	Rb *ebpf.MapSpec `ebpf:"rb"`
+	Events *ebpf.MapSpec `ebpf:"events"`
 }
 
 // ringbufObjects contains all objects after they have been loaded into the kernel.
@@ -82,12 +83,12 @@ func (o *ringbufObjects) Close() error {
 //
 // It can be passed to loadRingbufObjects or ebpf.CollectionSpec.LoadAndAssign.
 type ringbufMaps struct {
-	Rb *ebpf.Map `ebpf:"rb"`
+	Events *ebpf.Map `ebpf:"events"`
 }
 
 func (m *ringbufMaps) Close() error {
 	return _RingbufClose(
-		m.Rb,
+		m.Events,
 	)
 }
 
@@ -95,10 +96,13 @@ func (m *ringbufMaps) Close() error {
 //
 // It can be passed to loadRingbufObjects or ebpf.CollectionSpec.LoadAndAssign.
 type ringbufPrograms struct {
+	KprobeExecve *ebpf.Program `ebpf:"kprobe_execve"`
 }
 
 func (p *ringbufPrograms) Close() error {
-	return _RingbufClose()
+	return _RingbufClose(
+		p.KprobeExecve,
+	)
 }
 
 func _RingbufClose(closers ...io.Closer) error {

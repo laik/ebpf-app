@@ -3,39 +3,36 @@
 #include "../common/vmlinux.h"
 #include "../common/bpf_helpers.h"
 
-#define TASK_COMM_LEN 16
-#define MAX_FILENAME_LEN 512
+char __license[] SEC("license") = "Dual MIT/GPL";
 
-struct event
+struct event_t
 {
-    int pid;
-    char comm[TASK_COMM_LEN];
-    char filename[MAX_FILENAME_LEN];
+    u32 pid;
+    char comm[80];
 };
+
 struct
 {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
-    __uint(max_entries, 256 * 1024 /* 256 KB */);
-} rb SEC(".maps");
+    __uint(max_entries, 1 << 24);
+} events SEC(".maps");
 
-SEC("tp/sched/sched_process_exec")
-int handle_exec(struct trace_event_raw_sched_process_exec *ctx)
+SEC("kprobe/sys_execve")
+int kprobe_execve(struct pt_regs *ctx)
 {
-    unsigned fname_off = ctx->__data_loc_filename & 0xFFFF;
-    struct event *e;
+    u64 id = bpf_get_current_pid_tgid();
+    u32 tgid = id >> 32;
+    struct event_t *task_info;
 
-    unsigned int ret;
-
-    e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
-    if (!e)
+    task_info = bpf_ringbuf_reserve(&events, sizeof(struct event_t), 0);
+    if (!task_info)
+    {
         return 0;
+    }
 
-    e->pid = bpf_get_current_pid_tgid() >> 32;
-    bpf_get_current_comm(&e->comm, sizeof(e->comm));
-    bpf_probe_read_str(&e->filename, sizeof(e->filename), (void *)ctx + fname_off);
+    task_info->pid = tgid;
+    bpf_get_current_comm(&task_info->comm, 80);
 
-    bpf_ringbuf_submit(e, 0);
+    bpf_ringbuf_submit(task_info, 0);
     return 0;
 }
-
-char LICENSE[] SEC("license") = "Dual BSD/GPL";
