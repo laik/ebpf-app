@@ -25,6 +25,12 @@ ip netns exec ns1 ip link set dev dc-1 up
 ip netns exec ns2 ip link set dev dc-2 up
 ```
 
+
+
+```
+apt install iperf3 -y
+```
+
 ```
 term1:
 
@@ -32,17 +38,20 @@ make build
 ./bin/xdp-redirect --cfg config/cfg.yaml
 
 term2:
-ip netns exec ns1 iperf -s 
+ip netns exec ns1 iperf3 -s 
 
 term3:
-ip netns exec ns2 iperf -c 169.254.1.10
+ip netns exec ns2 iperf3 -c 169.254.1.10
 
 ```
+
 
 
 
 Lab2
 ```
+apt-get install -y bridge-utils
+
 brctl addbr sw2
 ifconfig sw2 up
 brctl addif sw2 sc-1
@@ -50,10 +59,10 @@ brctl addif sw2 sc-2
 
 
 term2:
-ip netns exec ns1 iperf -s 
+ip netns exec ns1 iperf3 -s 
 
 term3:
-ip netns exec ns2 iperf -c 169.254.1.10
+ip netns exec ns2 iperf3 -c 169.254.1.10
 
 ```
 
