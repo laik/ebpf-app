@@ -86,7 +86,11 @@ func (c *App) Launch(ctx context.Context) error {
 		log.Fatalf("opening ringbuf reader: %s", err)
 	}
 	defer rd.Close()
-
+	defer func() {
+		if err := c.cleanup(); err != nil {
+			log.Fatalf("cleanup error: %s", err)
+		}
+	}()
 	// Close the reader when the process receives a signal, which will exit
 	// the read loop.
 	go func() {
@@ -119,14 +123,3 @@ func (c *App) Launch(ctx context.Context) error {
 		log.Printf("pid: %d\tcomm: %s\n", event.PID, unix.ByteSliceToString(event.Comm[:]))
 	}
 }
-
-// func (c *App) printResult() error {
-// 	// var key uint32
-// 	// var value uint32
-// 	// if err := c.objs.MonitorMap.NextKey(key, value); err != nil {
-// 	// 	return err
-// 	// }
-
-// 	// fmt.Printf("recv key %d value %d\r\n", key, value)
-// 	return nil
-// }

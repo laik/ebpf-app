@@ -48,7 +48,8 @@
         "fib_rules.h": "c",
         "rtnetlink.h": "c",
         "ip_fib.h": "c",
-        "pkt_sched.h": "c"
+        "pkt_sched.h": "c",
+        "sock.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

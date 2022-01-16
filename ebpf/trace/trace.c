@@ -1,5 +1,4 @@
 #include "../common/bpf_helpers.h"
-#include "../common/helper.h"
 #include "trace.h"
 
 struct bpf_map_def SEC("maps") prog_map = {

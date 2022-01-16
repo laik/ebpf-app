@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/cilium/ebpf"
+	"github.com/cilium/ebpf/rlimit"
 	"github.com/hashicorp/go-multierror"
 	"github.com/laik/ebpf-app/pkg/common"
 	"github.com/vishvananda/netlink"
@@ -28,10 +29,8 @@ func NewApp(input map[string]string) (*App, error) {
 		linkMap: make(map[string]*netlink.Link),
 	}
 
-	c.input = common.MakeSymm(input)
-
-	if err := common.IncreaseResourceLimits(); err != nil {
-		return nil, err
+	if err := rlimit.RemoveMemlock(); err != nil {
+		log.Fatal(err)
 	}
 
 	err := loadRedirectObjects(c.objs, &ebpf.CollectionOptions{})
@@ -87,9 +86,7 @@ func (c *App) cleanup() error {
 
 // update ensures running state matches the candidate
 func (c *App) update(candidates map[string]string) error {
-
 	candidates = common.MakeSymm(candidates)
-
 	added, changed, orphaned := common.ConfDiff(c.input, candidates)
 
 	// Dealing with added interfaces
@@ -151,7 +148,6 @@ func (c *App) updateBpfMap(added, changed, removed []string) error {
 // This function blocks forever and context can be used to gracefully stop it.
 // updateCh expects a map between interfaces, similar to input of NewXconnectApp.
 func (c *App) Launch(ctx context.Context, updateCh chan map[string]string) {
-
 	var links []string
 	for link := range c.linkMap {
 		links = append(links, link)

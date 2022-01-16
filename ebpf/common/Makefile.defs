@@ -1,0 +1,6 @@
+LLC ?= llc
+CLANG ?= clang
+CC ?= gcc
+
+# Expect this is defined by including Makefile, but define if not
+COMMON_DIR ?= common

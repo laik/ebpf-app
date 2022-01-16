@@ -2,7 +2,6 @@
 
 #include "../common/bpf_helpers.h"
 #include "../common/bpf_endian.h"
-#include "../common/helper.h"
 #include "../common/vmlinux.h"
 #include "pingcount.h"
 

@@ -1,5 +1,4 @@
 #include "../common/vmlinux.h"
-#include "../common/helper.h"
 #include "../common/bpf_helpers.h"
 #include "../common/bpf_endian.h"
 

@@ -1,11 +1,7 @@
 #ifndef __SRV6_STRUCTS_H
 #define __SRV6_STRUCTS_H
 #include "srv6_consts.h"
-
-// #include <linux/types.h>
-// #include <linux/in6.h> /* For struct in6_addr. */
 #include "../common/vmlinux.h"
-#include "../common/helper.h"
 
 struct v6addr_heep
 {

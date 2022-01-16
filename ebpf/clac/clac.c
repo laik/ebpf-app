@@ -1,5 +1,4 @@
 #include "../common/bpf_helpers.h"
-#include "../common/helper.h"
 
 // linux 5.4 latest
 #define MAX_PROG 4096

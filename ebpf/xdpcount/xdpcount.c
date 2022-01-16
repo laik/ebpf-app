@@ -3,7 +3,6 @@
 // local dependence
 #include "../common/bpf_helpers.h"
 #include "../common/bpf_endian.h"
-#include "../common/helper.h"
 
 /* This is the data record stored in the map */
 struct datarec

@@ -61,7 +61,6 @@ type sockopsProgramSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type sockopsMapSpecs struct {
-	SockOpsMap *ebpf.MapSpec `ebpf:"sock_ops_map"`
 }
 
 // sockopsObjects contains all objects after they have been loaded into the kernel.
@@ -83,13 +82,10 @@ func (o *sockopsObjects) Close() error {
 //
 // It can be passed to loadSockopsObjects or ebpf.CollectionSpec.LoadAndAssign.
 type sockopsMaps struct {
-	SockOpsMap *ebpf.Map `ebpf:"sock_ops_map"`
 }
 
 func (m *sockopsMaps) Close() error {
-	return _SockopsClose(
-		m.SockOpsMap,
-	)
+	return _SockopsClose()
 }
 
 // sockopsPrograms contains all programs after they have been loaded into the kernel.

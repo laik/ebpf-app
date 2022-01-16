@@ -13,6 +13,7 @@ build: generate
 	go build -o ${BIN}/xdppingcount cmd/xdppingcount/*.go 
 	go build -o ${BIN}/srv6 cmd/srv6/*.go 
 	go build -o ${BIN}/clac cmd/clac/*.go 
+	go build -o ${BIN}/sockops cmd/sockops/*.go 
 	
 lint:
 	golangci-lint run

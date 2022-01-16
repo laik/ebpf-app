@@ -25,6 +25,16 @@ func LookupLink(intf string) (*netlink.Link, error) {
 	return &link, nil
 }
 
+// func LookupLink2(intf string) (ebpflink.Link, error) {
+// 	netlinkLink, err := LookupLink(intf)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	// ebpflink.AttachIter()
+// 	// (*netlinkLink).Attrs().Index()
+// 	return &ebpflink.AttachIter(), nil
+// }
+
 // forcing xdpgeneric for veth because https://www.netdevconf.org/0x13/session.html?talk-veth-xdp
 // tuntap also requires this probably for the same reasons
 func XdpFlags(linkType string) int {

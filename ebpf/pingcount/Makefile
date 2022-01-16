@@ -1,5 +1,4 @@
 XDP_TARGETS  	  := xdppingcount
-# XDP_TARGETS  := clac
 
 LLC ?= llc
 CLANG ?= clang

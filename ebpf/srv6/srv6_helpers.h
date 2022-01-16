@@ -4,7 +4,6 @@
 #include "../common/vmlinux.h"
 #include "../common/bpf_helpers.h"
 #include "../common/bpf_endian.h"
-#include "../common/helper.h"
 #include "srv6_consts.h"
 
 #ifndef ETH_ALEN
