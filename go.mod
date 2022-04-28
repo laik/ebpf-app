@@ -1,8 +1,8 @@
 module github.com/laik/ebpf-app
 
-go 1.17
+go 1.18
 
-require github.com/cilium/ebpf v0.7.0
+require github.com/cilium/ebpf v0.8.1
 
 require github.com/vishvananda/netlink v1.1.0
 

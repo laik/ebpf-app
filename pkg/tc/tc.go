@@ -15,6 +15,7 @@ type App struct {
 	objs    *clsactObjects
 	input   map[string]string
 	linkMap map[string]*netlink.Link
+	TcFilter
 }
 
 func NewClsactApp(input map[string]string) (*App, error) {
@@ -39,13 +40,12 @@ func NewClsactApp(input map[string]string) (*App, error) {
 		return nil, err
 	}
 
+	c.TcFilter = NewTcFilter()
+
 	return c, nil
 }
 
 func (c *App) init() error {
-	// netlink.TcAct
-	// netlink.IpsetDestroy("")
-	
 	return nil
 }
 
@@ -54,9 +54,6 @@ func (c *App) Launch(ctx context.Context, updateCh chan map[string]string) {
 	for link := range c.linkMap {
 		links = append(links, link)
 	}
-	// if err := c.addXdpToLink(links); err != nil {
-	// 	log.Fatalf("Failed to set up XDP on links: %s", err)
-	// }
 
 	// for {
 	// 	select {
@@ -72,4 +69,8 @@ func (c *App) Launch(ctx context.Context, updateCh chan map[string]string) {
 	// 		}
 	// 	}
 	// }
+}
+
+func (c *App) addFilter(intf uint32, d Driect) error {
+	return c.Attach(intf, d, ebpf.ProgramID(c.objs.Classifier.FD()))
 }

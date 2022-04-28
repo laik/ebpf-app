@@ -6,9 +6,12 @@
 
 int process_packet(struct __sk_buff *skb)
 {
+    
+    bpfprintf("call process_packet src %d\r\n");
     return -1;
 }
 
+SEC("c1")
 int classifier(struct __sk_buff *skb)
 {
     void *data_end = (void *)(unsigned long long)skb->data_end;
