@@ -34,6 +34,10 @@ func NewApp() (*App, error) {
 	return c, nil
 }
 
+func (c *App) AttachToNs(ns string) error {
+	return nil
+}
+
 func (c *App) Run(ctx context.Context) error {
 	for {
 		select {

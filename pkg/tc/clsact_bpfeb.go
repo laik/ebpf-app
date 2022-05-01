@@ -54,7 +54,8 @@ type clsactSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type clsactProgramSpecs struct {
-	Classifier *ebpf.ProgramSpec `ebpf:"classifier"`
+	Classifier1 *ebpf.ProgramSpec `ebpf:"classifier1"`
+	Classifier2 *ebpf.ProgramSpec `ebpf:"classifier2"`
 }
 
 // clsactMapSpecs contains maps before they are loaded into the kernel.
@@ -92,12 +93,14 @@ func (m *clsactMaps) Close() error {
 //
 // It can be passed to loadClsactObjects or ebpf.CollectionSpec.LoadAndAssign.
 type clsactPrograms struct {
-	Classifier *ebpf.Program `ebpf:"classifier"`
+	Classifier1 *ebpf.Program `ebpf:"classifier1"`
+	Classifier2 *ebpf.Program `ebpf:"classifier2"`
 }
 
 func (p *clsactPrograms) Close() error {
 	return _ClsactClose(
-		p.Classifier,
+		p.Classifier1,
+		p.Classifier2,
 	)
 }
 

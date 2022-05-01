@@ -72,5 +72,5 @@ func (c *App) Launch(ctx context.Context, updateCh chan map[string]string) {
 }
 
 func (c *App) addFilter(intf uint32, d Driect) error {
-	return c.Attach(intf, d, ebpf.ProgramID(c.objs.Classifier.FD()))
+	return c.Attach(intf, d, ebpf.ProgramID(c.objs.Classifier1.FD()))
 }

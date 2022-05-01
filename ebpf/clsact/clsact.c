@@ -12,7 +12,7 @@ int process_packet(struct __sk_buff *skb)
 }
 
 SEC("c1")
-int classifier(struct __sk_buff *skb)
+int classifier1(struct __sk_buff *skb)
 {
     void *data_end = (void *)(unsigned long long)skb->data_end;
     void *data = (void *)(unsigned long long)skb->data;
@@ -30,6 +30,13 @@ int classifier(struct __sk_buff *skb)
          */
         return process_packet(skb);
     else
+        return TC_ACT_OK;
+}
+
+
+SEC("c12")
+int classifier2(struct __sk_buff *skb)
+{
         return TC_ACT_OK;
 }
 
